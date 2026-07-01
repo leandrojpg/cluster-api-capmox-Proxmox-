@@ -1,0 +1,43 @@
+## O Cluster API (CAPI) é um subprojeto do Kubernetes que permite criar, configurar, atualizar e dimensionar clusters utilizando a própria lógica do Kubernetes.
+O CAPI cluster Capi é uma forma de pedir cluster usando o próprio kubernetes de forma direta e simples.
+
+KIND O QUE É?
+Existe um projeto chamado kind que é um kubernetes bem reduzido para caber tudo em um só com básico para funcionar.
+
+## E de onde você comeca?
+Primeiro de tudo voce precisa ter um Promox rodando em algum servidor relativamente suportavel, no meu ambiente eu tenho um servidor montado com peças "baratas da china".
+Hardware:
+Placa mãe SZMZ
+Memória: 64g
+Soquete LGA 2011
+Processador Xeon E5-2682 
+
+E agora com o cluster criado o que eu faço?
+No meu caso eu criei uma vm chamada bastion e é dela que vou fazer tudo, inclusive instalar o kind
+
+## SETUP
+
+Passo 1: Instalar os Pré-requisitos na Bastion
+sudo apt-get update
+sudo apt-get install -y docker.io
+sudo systemctl enable --now docker
+
+Instalar o kubectl (Para interagir com os clusters):
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/
+
+Instalar o kind
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64
+chmod +x ./kind
+sudo mv ./kind /usr/local/bin/
+
+Instalar o clusterctl
+curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.7.3/clusterctl-linux-amd64 -o clusterctl
+chmod +x clusterctl
+sudo mv clusterctl /usr/local/bin/
+
+
+
+Instalando o kind no bastion
+
