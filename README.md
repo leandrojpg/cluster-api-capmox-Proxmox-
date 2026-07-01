@@ -201,9 +201,21 @@ Em seguida crie o cluster
 kind create cluster --name capi-genesis --config kind-config.yaml
 <img width="593" height="264" alt="image" src="https://github.com/user-attachments/assets/e388599f-66c5-42cf-83c6-c6c5b8e1a522" />
 
+Como cluster criado valide só para sacar como fica:
+kubectl get nodes
+<img width="586" height="82" alt="image" src="https://github.com/user-attachments/assets/13be2289-c60f-4a25-a53f-f14733064632" />
+
+Agora eu vou inicializar Cluster API passando o provider sendo Proxmox ( se fosse vmware era so trocar o nome )
+clusterctl init --infrastructure proxmox
+<img width="844" height="252" alt="image" src="https://github.com/user-attachments/assets/8e1216a2-a04f-4ab3-b60a-417f314b1c83" />
+
+Legal agora preciso criar o token no Proxmox que vai ser usado pelo cluster kind que tem o promox se conectar ao proxmox
+
+<img width="922" height="614" alt="image" src="https://github.com/user-attachments/assets/884a3e8b-8170-48f1-a461-a7c95f61a665" />
 
 
-kubectl cluster-info --context kind-capi-genesis
+
+
 
 
 
