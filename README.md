@@ -213,8 +213,9 @@ Legal agora preciso criar o token no Proxmox que vai ser usado pelo cluster kind
 
 <img width="922" height="614" alt="image" src="https://github.com/user-attachments/assets/884a3e8b-8170-48f1-a461-a7c95f61a665" />
 
-Logue no servidor do proxmox aqui no meu lab é 192.168.18.31 e altere as roles
+Logue no servidor do proxmox aqui no meu lab é 192.168.18.31 e altere as roles  
 pveum acl modify /nodes --token 'root@pam!kubernetes' --roles Administrator
+
 
 
 
