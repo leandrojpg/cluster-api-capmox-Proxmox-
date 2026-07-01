@@ -209,12 +209,23 @@ Agora eu vou inicializar Cluster API passando o provider sendo Proxmox ( se foss
 clusterctl init --infrastructure proxmox
 <img width="844" height="252" alt="image" src="https://github.com/user-attachments/assets/8e1216a2-a04f-4ab3-b60a-417f314b1c83" />
 
-Legal agora preciso criar o token no Proxmox que vai ser usado pelo cluster kind que tem o promox se conectar ao proxmox  
+Legal agora preciso criar o token no Proxmox que vai ser usado pelo cluster kind que tem o promox se conectar ao proxmox (Tome nota do Token)
 
 <img width="922" height="614" alt="image" src="https://github.com/user-attachments/assets/884a3e8b-8170-48f1-a461-a7c95f61a665" />
 
 Logue no servidor do proxmox aqui no meu lab é 192.168.18.31 e altere as roles  
-pveum acl modify /nodes --token 'root@pam!kubernetes' --roles Administrator
+pveum acl modify /nodes --token 'root@pam!kubernetes' --roles Administrator  
+
+O provedor do Proxmox da IONOS Cloud (cluster-api-provider-proxmox) não aceita receber a URL e o Token diretamente, sendo assim precisamos criar um secret 
+crie um arquivo proxmox-credentials.yaml
+vim proxmox-credentials.yaml
+
+<img width="360" height="182" alt="image" src="https://github.com/user-attachments/assets/ec83cc5f-dfa2-48f3-90e4-22cdeed58c2c" />
+
+
+
+
+
 
 
 
