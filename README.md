@@ -188,13 +188,13 @@ clusterctl version
 
 # Próximo passo
 
-Agora que a Bastion está pronta, o próximo passo será criar o **Cluster Genesis** utilizando o Kind.
+Agora que a Bastion está pronta, o próximo passo será criar o **Cluster Genesis** utilizando o Kind.  
 
 Esse cluster hospedará todos os componentes do Cluster API e será responsável por criar automaticamente os clusters Kubernetes dentro do Proxmox.  
 
-Crie diretório para organizar as coisas:
-mkdir /opt/cluster-api/
-Crie um arquivo  com o seguinte conteúdo
+Crie diretório para organizar as coisas:  
+mkdir /opt/cluster-api/  
+Crie um arquivo  com o seguinte conteúdo  
 vim kind-config.yaml 
 
 Em seguida crie o cluster 
