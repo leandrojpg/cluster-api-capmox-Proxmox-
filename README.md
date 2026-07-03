@@ -277,8 +277,7 @@ Crie um arquivo chamado **`cluster-lab.yaml`**.
 ```bash
 vim cluster-lab.yaml
 ```
-
-Copie todo o conteúdo abaixo para o arquivo.
+Copie todo o conteúdo do arquivo que está na raiz do projeto.(Altere de acordo com suas necessidades)
 
 > **Importante:**
 Entenda os principais pontos e como eles funcionam:
@@ -289,7 +288,24 @@ Entenda os principais pontos e como eles funcionam:
 > - Endereço IP da API (Control Plane)  
     controlPlaneEndpoint:  
     host: 192.168.18.202  
-    port: 6443  
+    port: 6443
+
+> - Serve para resolução de nomes externos e não do cluster DNS
+    dnsServers:
+  - 8.8.8.8
+  - 1.1.1.1
+  - 
+> - O primeiro IP no caso o 203 vai ser alocado na interface de rede real para a vm que será o Control-Plane.
+> - Os outros IP 204 e 205 serão alocados na interface de rede para as vms Workers e o gateway é o da rede padrão.
+    dnsServers:
+    ipv4Config:
+    addresses:
+    - 192.168.18.203
+    - 192.168.18.204
+    - 192.168.18.205
+    gateway: 192.168.18.1
+    prefix: 24
+    
 
 > - Gateway
 > - DNS
