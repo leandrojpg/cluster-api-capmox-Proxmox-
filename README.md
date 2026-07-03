@@ -291,9 +291,9 @@ Entenda os principais pontos e como eles funcionam:
     port: 6443
 
 > - DNS Serve para resolução de nomes externos e não do cluster DNS  
-    dnsServers:
-    8.8.8.8
-    1.1.1.1
+    dnsServers:  
+    8.8.8.8  
+    1.1.1.1  
   - 
 > - O primeiro IP no caso o 203 vai ser alocado na interface de rede real para a vm que será o Control-Plane.
 > - Os outros IP 204 e 205 serão alocados na interface de rede para as vms Workers e o gateway é o da rede padrão.
