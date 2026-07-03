@@ -371,6 +371,7 @@ postKubeadmCommands:
 ```yaml
 
 
+
 kubectl apply -f cluster-lab.yaml
 
 ## Acompanhando a criação do cluster
