@@ -295,11 +295,13 @@ Quando o manifesto é aplicado, o CAPMOX captura o primeiro endereço de IP disp
 > * **`dnsServers` (8.8.8.8 / 1.1.1.1):** DNS externo para as VMs navegarem na internet; não afeta o CoreDNS interno do cluster.
 > * **Versão do Kubernetes:** `v1.36.2`
 >
+> 🖥️ **`template.spec` (Dimensionamento das VMs no Proxmox):** Define as especificações de hardware das instâncias que serão clonadas a partir do Template ID `9000` no storage `DATASTORE-04-NVME`. Cada máquina nascerá configurada com 2 Cores, 1 Socket, 4GB de RAM, um disco de boot SCSI de 40GB e conectada à bridge de rede `vmbr0` usando o driver otimizado `virtio`.
+>
 > 🪪 **`provider-id: "proxmox://{{ ds.meta_data.instance_id }}"` (Identidade do Nó):** Funciona como o **"RG"** da máquina virtual. No boot, o Cloud-Init troca essa variável pelo ID real da VM no Proxmox (ex: `proxmox://101`). Isso vincula o nó do `kubectl get nodes` à VM física para que o CAPMOX saiba exatamente quem gerenciar, escalar ou destruir.
 >
 > 🛣️ **`clusterConfiguration` (Rede e SSL):** O `podSubnet` define a faixa de IPs que os Pods usarão internamente. O `certSANs` lista os IPs (`.202`, `.203`) e nomes autorizados no certificado SSL da API, evitando erros de TLS no `kubectl`.
 >
-> ⏱️ **`postKubeadmCommands` (Trava de Segurança):** Um loop que testa a saúde do endpoint (`/healthz`) a cada 5 segundos. Garante que os próximos passos do deploy só rodem quando o VIP (`.202`) estiver online, evitando falhas de conexão.
+> ⏱️ **`postKubeadmCommands` (Automação Pós-Boot):** Executa em lote uma trava de segurança que aguarda o VIP (`.202`) responder, instala o pacote do Calico CNI e aguarda os DaemonSets do Calico estarem criados para finalizar o deploy sem erros de concorrência.
 
 ```yaml
 # Endpoint de comunicação unificado do Control Plane (VIP)
@@ -359,7 +361,31 @@ postKubeadmCommands:
       sleep 3
     done
 
+# Configuração de hardware e origem das VMs no Proxmox
+template:
+  spec:
+    sourceNode: proxmox
+    templateID: 9000
+    storage: DATASTORE-04-NVME
+    memoryMiB: 4096
+    numCores: 2
+    numSockets: 1
+    format: qcow2
+    full: true
+    disks:
+      bootVolume:
+        disk: scsi0
+        sizeGb: 40
+    network:
+      default:
+        bridge: vmbr0
+        model: virtio
+
 ```
+
+## 📌 Validação:
+
+
 
 
 
