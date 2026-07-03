@@ -223,6 +223,7 @@ Instale também
 clusterctl init --ipam in-cluster    
 
 
+
 Legal, agora preciso criar o token no Proxmox que vai ser usado pelo cluster kind para se conectar ao proxmox (Tome nota do Token)
 Gera conforme mostrado acima. (Clique na opção Datacenter conforme mostrado e localize a API Tokens)  
 
