@@ -357,12 +357,16 @@ postKubeadmCommands:
       echo "Aguardando VIP 192.168.18.202..."
       sleep 5
     done
-  - kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml
-  - |
-    until kubectl --kubeconfig /etc/kubernetes/admin.conf get daemonset calico-node -n kube-system >/dev/null 2>&1; do
-      echo "Aguardando DaemonSet calico-node ser criado..."
-      sleep 3
-    done
+
+# Instala o Calico
+    - kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml
+
+# Aguarda o DaemonSet calico-node existir antes de aplicar o patch
+    - |
+      until kubectl --kubeconfig /etc/kubernetes/admin.conf get daemonset calico-node -n kube-system >/dev/null 2>&1; do
+        echo "Aguardando DaemonSet calico-node ser criado..."
+        sleep 3
+      done
 
 ```yaml
 # Cole aqui o conteúdo completo do arquivo cluster-lab.yaml
