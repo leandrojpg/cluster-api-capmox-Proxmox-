@@ -282,7 +282,11 @@ Copie todo o conteúdo abaixo para o arquivo.
 
 > **Importante:** Antes de aplicar o manifesto, revise os parâmetros abaixo para refletirem o seu ambiente:
 >
-> - Endereço IP da API (`controlPlaneEndpoint.host`)
+> - Endereço IP da API (Control Plane)
+> - controlPlaneEndpoint:
+    host: 192.168.18.202
+    port: 6443
+
 > - Gateway
 > - DNS
 > - Faixa de IPs das máquinas
