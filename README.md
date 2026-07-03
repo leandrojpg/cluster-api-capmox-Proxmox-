@@ -242,6 +242,20 @@ Crie um arquivo chamado `proxmox-credentials.yaml` com o seguinte conteúdo:
 crie um arquivo proxmox-credentials.yaml
 vim proxmox-credentials.yaml
 
+```bash
+apiVersion: v1
+kind: Secret
+metadata:
+  name: proxmox-credentials
+  namespace: default
+type: Opaque
+stringData:
+  url: "https://192.168.18.31:8006/"
+  token: "root@pam!kubernetes"
+  secret: "766a07cb-a0bd-4fef-8581-e3ad7059c809"
+
+```
+
 <img width="360" height="182" alt="image" src="https://github.com/user-attachments/assets/ec83cc5f-dfa2-48f3-90e4-22cdeed58c2c" />
 
 kubectl apply -f proxmox-credentials.yaml
