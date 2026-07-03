@@ -213,12 +213,13 @@ kubectl get nodes
 
 <img width="586" height="82" alt="image" src="https://github.com/user-attachments/assets/13be2289-c60f-4a25-a53f-f14733064632" />
 
-Agora eu vou inicializar Cluster API passando o provider sendo Proxmox ( se fosse vmware era so trocar o nome )  
-clusterctl init --infrastructure proxmox
+Agora eu vou inicializar Cluster API passando o provider sendo proxmox ( se fosse vmware era so trocar o nome )  
+clusterctl init --infrastructure proxmox  
+
 <img width="844" height="252" alt="image" src="https://github.com/user-attachments/assets/8e1216a2-a04f-4ab3-b60a-417f314b1c83" />
 
 Instale também 
-clusterctl init --ipam in-cluster
+clusterctl init --ipam in-cluster  
 
 
 Legal, agora preciso criar o token no Proxmox que vai ser usado pelo cluster kind para se conectar ao proxmox (Tome nota do Token)
