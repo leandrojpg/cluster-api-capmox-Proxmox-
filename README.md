@@ -289,14 +289,18 @@ Quando o manifesto é aplicado, o CAPMOX captura o primeiro endereço de IP disp
 ---
 ## 📌 Configuração do Cluster (YAML)
 
-## 📌 Configuração do Cluster (YAML)
-
-> 💡 **Entendendo a distribuição de IPs e Funções:**
-> * **`controlPlaneEndpoint` (.202):** É o **IP Virtual (VIP)** dedicado do cluster. Ele não pertence a nenhuma interface física fixa; a API do Kubernetes (`kube-apiserver`) fica escutando através dele para garantir um ponto de acesso único e flutuante.
-> * **Nó Control Plane (.203):** O primeiro IP do pool de IPAM (`ipv4Config`) é alocado diretamente na interface de rede real (física) da VM que assume o papel de Control Plane.
-> * **Nós Workers (.204 e .205):** Os IPs subsequentes do pool são alocados de forma sequencial nas interfaces de rede reais das instâncias que nascerem como Workers.
-> * **`dnsServers` (8.8.8.8 / 1.1.1.1):** Configuração de DNS para resolução de nomes externos (internet) para as VMs do Proxmox, não interferindo no CoreDNS interno do próprio Kubernetes.
+> 💡 **Entendendo a Arquitetura e Funções de Rede:**
+> * **`controlPlaneEndpoint` (.202):** É o **IP Virtual (VIP)** unificado. A API do Kubernetes (`kube-apiserver`) escuta por ele para garantir um acesso único e flutuante.
+> * **Nó Control Plane (.203):** IP real alocado na interface física da VM que assume o papel de Control Plane.
+> * **Nós Workers (.204 e .205):** IPs alocados sequencialmente nas interfaces reais das VMs Workers.
+> * **`dnsServers` (8.8.8.8 / 1.1.1.1):** DNS externo para as VMs navegarem na internet; não afeta o CoreDNS interno do cluster.
 > * **Versão do Kubernetes:** `v1.36.2`
+>
+> 🪪 **`provider-id: "proxmox://{{ ds.meta_data.instance_id }}"` (Identidade do Nó):** Funciona como o **"RG"** da máquina virtual. No boot, o Cloud-Init troca essa variável pelo ID real da VM no Proxmox (ex: `proxmox://101`). Isso vincula o nó do `kubectl get nodes` à VM física para que o CAPMOX saiba exatamente quem gerenciar, escalar ou destruir.
+>
+> 🛣️ **`clusterConfiguration` (Rede e SSL):** O `podSubnet` define a faixa de IPs que os Pods usarão internamente. O `certSANs` lista os IPs (`.202`, `.203`) e nomes autorizados no certificado SSL da API, evitando erros de TLS no `kubectl`.
+>
+> ⏱️ **`postKubeadmCommands` (Trava de Segurança):** Um loop que testa a saúde do endpoint (`/healthz`) a cada 5 segundos. Garante que os próximos passos do deploy só rodem quando o VIP (`.202`) estiver online, evitando falhas de conexão.
 
 ```yaml
 # Endpoint de comunicação unificado do Control Plane (VIP)
@@ -316,23 +320,35 @@ ipv4Config:
   gateway: 192.168.18.1
   prefix: 24
 
-# Registro de identidade do nó no Cloud Provider
+# Rede dos Pods e Certificados SSL da API
+clusterConfiguration:
+  networking:
+    podSubnet: "10.244.0.0/16"
+  apiServer:
+    certSANs:
+      - "192.168.18.202"
+      - "192.168.18.203"
+      - "lab-kubeadm-control-plane"
+
+# Registro de identidade do Nó Inicial (Control Plane)
 initConfiguration:
   nodeRegistration:
     kubeletExtraArgs:
       provider-id: "proxmox://{{ ds.meta_data.instance_id }}"
-    
 
-> - Gateway
-> - DNS
-> - Faixa de IPs das máquinas
-> - Nome do nó do Proxmox (`sourceNode`)
-> - ID do template (`templateID`)
-> - Storage utilizado (`storage`)
-> - Recursos de CPU e Memória
-> - Versão do Kubernetes
-> - Interface de rede utilizada pelo kube-vip (`vip_interface`)
-> - Nome do Secret contendo as credenciais do Proxmox (`credentialsRef`)
+# Registro de identidade dos demais nós (Workers)
+joinConfiguration:
+  nodeRegistration:
+    kubeletExtraArgs:
+      provider-id: "proxmox://{{ ds.meta_data.instance_id }}"
+
+# Comandos executados logo após a inicialização do cluster
+postKubeadmCommands:
+  - |
+    until curl -sk [https://192.168.18.202:6443/healthz](https://192.168.18.202:6443/healthz) >/dev/null 2>&1; do
+      echo "Aguardando VIP 192.168.18.202..."
+      sleep 5
+    done
 
 ```yaml
 # Cole aqui o conteúdo completo do arquivo cluster-lab.yaml
