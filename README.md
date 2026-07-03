@@ -282,29 +282,36 @@ Copie todo o conteúdo do arquivo que está na raiz do projeto.(Altere de acordo
 > **Importante:**
 Entenda os principais pontos e como eles funcionam:
 > 
-**Quando o manifesto é aplicado, a aplicação pega o primeiro endereço de IP do pool e fixa ele para ser usado na interface de rede. Esse IP é virtual e é por ele que a API vai ficar escutando.**
-> 
->
-> - Endereço IP da API (Control Plane)  
-    controlPlaneEndpoint:  
-    host: 192.168.18.202  
-    port: 6443
+## 🌐 Arquitetura de Rede do Cluster (CAPMOX)
 
-> - DNS Serve para resolução de nomes externos e não do cluster DNS  
-    dnsServers:  
-    8.8.8.8  
-    1.1.1.1  
-  - 
-> - O primeiro IP no caso o 203 vai ser alocado na interface de rede real para a vm que será o Control-Plane.
-> - Os outros IP 204 e 205 serão alocados na interface de rede para as vms Workers e o gateway é o da rede padrão.
-    dnsServers:
-    ipv4Config:
-    addresses:
+Quando o manifesto é aplicado, o CAPMOX captura o primeiro endereço de IP disponível no pool de IPAM (neste caso, o `192.168.18.203`) e o fixa como um **IP Virtual (VIP)**. É através deste IP virtual que a API do Kubernetes (`kube-apiserver`) ficará escutando todo o cluster (bastion, workers e administradores) de forma estável.
+
+---
+
+### 📌 Configuração do Cluster (YAML)
+
+> 💡 **Entendendo a distribuição dos IPs:**
+> * **`controlPlaneEndpoint` (.203):** É o IP Virtual (VIP) oficial da API. O primeiro IP do pool do IPAM é alocado na interface de rede real para a VM que será o Control Plane, servindo como o ponto de escuta fixo do cluster.
+> * **Workers (.204 e .205):** Os IPs subsequentes do pool serão alocados automaticamente nas interfaces de rede reais das instâncias que nascerem como Workers.
+> * **`dnsServers` (8.8.8.8 / 1.1.1.1):** Configuração de DNS para resolução de nomes externos (internet) para as VMs do Proxmox, não interferindo no CoreDNS interno do próprio Kubernetes.
+
+```yaml
+# Endpoint de comunicação unificado do Control Plane (VIP)
+controlPlaneEndpoint:  
+  host: 192.168.18.203  
+  port: 6443
+
+# Configuração de rede e alocação de IPs via IPAM (CAPMOX)
+dnsServers:  
+  - 8.8.8.8  
+  - 1.1.1.1  
+ipv4Config:
+  addresses:
     - 192.168.18.203
     - 192.168.18.204
     - 192.168.18.205
-    gateway: 192.168.18.1
-    prefix: 24
+  gateway: 192.168.18.1
+  prefix: 24
     
 
 > - Gateway
