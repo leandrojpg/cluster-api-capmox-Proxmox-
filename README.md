@@ -370,16 +370,8 @@ postKubeadmCommands:
 
 ```yaml
 
----
-## Aplicando o manifesto
 
-Após revisar o arquivo, aplique-o no **Cluster Genesis**
-
-```bash
 kubectl apply -f cluster-lab.yaml
-```
-
----
 
 ## Acompanhando a criação do cluster
 
