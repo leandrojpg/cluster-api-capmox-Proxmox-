@@ -286,7 +286,6 @@ Entenda os principais pontos e como eles funcionam:
 
 Quando o manifesto é aplicado, o CAPMOX captura o primeiro endereço de IP disponível no pool de IPAM (neste caso, o `192.168.18.203`) e o fixa como um **IP Virtual (VIP)**. É através deste IP virtual que a API do Kubernetes (`kube-apiserver`) ficará escutando todo o cluster (bastion, workers e administradores) de forma estável.
 
----
 ## 📌 Configuração do Cluster (YAML)
 
 > 💡 **Entendendo a Arquitetura e Funções de Rede:**
@@ -342,32 +341,22 @@ joinConfiguration:
     kubeletExtraArgs:
       provider-id: "proxmox://{{ ds.meta_data.instance_id }}"
 
-# Comandos executados logo após a inicialização do cluster
+# Comandos executados sequencialmente pós-inicialização
 postKubeadmCommands:
+  # 1. Aguarda o VIP do control plane ficar disponível
   - |
     until curl -sk [https://192.168.18.202:6443/healthz](https://192.168.18.202:6443/healthz) >/dev/null 2>&1; do
       echo "Aguardando VIP 192.168.18.202..."
       sleep 5
     done
-
-# Aguardo do DaemonSet estar pronto
-postKubeadmCommands:
+  # 2. Instala o Calico CNI
+  - kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f [https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml](https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml)
+  # 3. Aguarda o DaemonSet do Calico estar pronto
   - |
-    until curl -sk https://192.168.18.202:6443/healthz >/dev/null 2>&1; do
-      echo "Aguardando VIP 192.168.18.202..."
-      sleep 5
+    until kubectl --kubeconfig /etc/kubernetes/admin.conf get daemonset calico-node -n kube-system >/dev/null 2>&1; do
+      echo "Aguardando DaemonSet calico-node ser criado..."
+      sleep 3
     done
-
-# Instala o Calico CNI
-    - kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml
-
-# Aguarda o DaemonSet calico-node existir antes de aplicar o patch
-    - |
-      until kubectl --kubeconfig /etc/kubernetes/admin.conf get daemonset calico-node -n kube-system >/dev/null 2>&1; do
-        echo "Aguardando DaemonSet calico-node ser criado..."
-        sleep 3
-      done
-
 
 
 
