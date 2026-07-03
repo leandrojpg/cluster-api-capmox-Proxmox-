@@ -207,7 +207,8 @@ Em seguida crie o cluster
 kind create cluster --name capi-genesis --config kind-config.yaml  
 <img width="593" height="264" alt="image" src="https://github.com/user-attachments/assets/e388599f-66c5-42cf-83c6-c6c5b8e1a522" />
 
-Com o cluster criado valide só para sacar como fica:
+Com o cluster criado valide só para sacar como fica:  
+
 kubectl get nodes
 <img width="586" height="82" alt="image" src="https://github.com/user-attachments/assets/13be2289-c60f-4a25-a53f-f14733064632" />
 
