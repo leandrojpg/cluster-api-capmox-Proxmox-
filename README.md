@@ -197,7 +197,12 @@ mkdir /opt/cluster-api/
 Crie um arquivo  com o seguinte conteúdo  
 vim kind-config.yaml 
 
-Em seguida crie o cluster
+```bash
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+```
+
+Em seguida crie o cluster  
 
 kind create cluster --name capi-genesis --config kind-config.yaml  
 <img width="593" height="264" alt="image" src="https://github.com/user-attachments/assets/e388599f-66c5-42cf-83c6-c6c5b8e1a522" />
