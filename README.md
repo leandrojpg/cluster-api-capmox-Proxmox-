@@ -299,7 +299,7 @@ Quando o manifesto é aplicado, o CAPMOX captura o primeiro endereço de IP disp
 >
 > 🛣️ **`clusterConfiguration` (Rede e SSL):** O `podSubnet` define a faixa de IPs que os Pods usarão internamente. O `certSANs` lista os IPs (`.202`, `.203`) e nomes autorizados no certificado SSL da API, evitando erros de TLS no `kubectl`.
 >
-> ⏱️ **`postKubeadmCommands` (Trava de Segurança):** Um loop que testa a saúde do endpoint (`/healthz`) a cada 5 segundos. Garante que os próximos passos do deploy só rodem quando o VIP (`.202`) estiver online, evitando falhas de conexão.
+> ⏱️ **`postKubeadmCommands` (Automação Pós-Boot):** Executa em lote uma trava de segurança que aguarda o VIP (`.202`) responder, instala o pacote do Calico CNI e aguarda os DaemonSets do Calico estarem criados para finalizar o deploy sem erros de concorrência.
 
 ```yaml
 # Endpoint de comunicação unificado do Control Plane (VIP)
@@ -341,23 +341,18 @@ joinConfiguration:
     kubeletExtraArgs:
       provider-id: "proxmox://{{ ds.meta_data.instance_id }}"
 
-# Comandos executados sequencialmente pós-inicialização
+# Script sequencial de inicialização e deploy do CNI
 postKubeadmCommands:
-  # 1. Aguarda o VIP do control plane ficar disponível
   - |
     until curl -sk [https://192.168.18.202:6443/healthz](https://192.168.18.202:6443/healthz) >/dev/null 2>&1; do
       echo "Aguardando VIP 192.168.18.202..."
       sleep 5
     done
-  # 2. Instala o Calico CNI
-  - kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f [https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml](https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml)
-  # 3. Aguarda o DaemonSet do Calico estar pronto
-  - |
+    kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f [https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml](https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml)
     until kubectl --kubeconfig /etc/kubernetes/admin.conf get daemonset calico-node -n kube-system >/dev/null 2>&1; do
       echo "Aguardando DaemonSet calico-node ser criado..."
       sleep 3
     done
-
 
 
 
