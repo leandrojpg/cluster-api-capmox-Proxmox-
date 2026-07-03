@@ -219,6 +219,7 @@ clusterctl init --infrastructure proxmox
 <img width="844" height="252" alt="image" src="https://github.com/user-attachments/assets/8e1216a2-a04f-4ab3-b60a-417f314b1c83" />
 
 Instale também 
+
 clusterctl init --ipam in-cluster    
 
 
