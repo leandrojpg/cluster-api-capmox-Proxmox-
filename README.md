@@ -209,7 +209,8 @@ kind create cluster --name capi-genesis --config kind-config.yaml
 
 Com o cluster criado valide só para sacar como fica:  
 
-kubectl get nodes
+kubectl get nodes  
+
 <img width="586" height="82" alt="image" src="https://github.com/user-attachments/assets/13be2289-c60f-4a25-a53f-f14733064632" />
 
 Agora eu vou inicializar Cluster API passando o provider sendo Proxmox ( se fosse vmware era so trocar o nome )  
