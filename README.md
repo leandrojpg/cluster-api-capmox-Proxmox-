@@ -236,11 +236,11 @@ pveum acl modify /nodes --token 'root@pam!kubernetes' --roles Administrator
 
 O **Cluster API Provider for Proxmox (CAPMOX)** não permite informar as credenciais de acesso (URL da API, Token ID e Token Secret) diretamente no manifesto do cluster.
 
-Por questões de segurança, essas informações devem ser armazenadas em um **Secret** do Kubernetes, que será referenciado pelo recurso `ProxmoxCluster`.
+Por questões de segurança, essas informações devem ser armazenadas em um **Secret** do Kubernetes, que será referenciado pelo recurso `ProxmoxCluster`.  
 
-Crie um arquivo chamado `proxmox-credentials.yaml` com o seguinte conteúdo:
-crie um arquivo proxmox-credentials.yaml
-vim proxmox-credentials.yaml
+Crie um arquivo chamado `proxmox-credentials.yaml` com o seguinte conteúdo:  
+
+vim proxmox-credentials.yaml  
 
 ```bash
 apiVersion: v1
