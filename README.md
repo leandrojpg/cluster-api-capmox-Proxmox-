@@ -287,8 +287,7 @@ Entenda os principais pontos e como eles funcionam:
 Quando o manifesto é aplicado, o CAPMOX captura o primeiro endereço de IP disponível no pool de IPAM (neste caso, o `192.168.18.203`) e o fixa como um **IP Virtual (VIP)**. É através deste IP virtual que a API do Kubernetes (`kube-apiserver`) ficará escutando todo o cluster (bastion, workers e administradores) de forma estável.
 
 ---
-
-### 📌 Configuração do Cluster (YAML)
+## 📌 Configuração do Cluster (YAML)
 
 ## 📌 Configuração do Cluster (YAML)
 
@@ -297,6 +296,7 @@ Quando o manifesto é aplicado, o CAPMOX captura o primeiro endereço de IP disp
 > * **Nó Control Plane (.203):** O primeiro IP do pool de IPAM (`ipv4Config`) é alocado diretamente na interface de rede real (física) da VM que assume o papel de Control Plane.
 > * **Nós Workers (.204 e .205):** Os IPs subsequentes do pool são alocados de forma sequencial nas interfaces de rede reais das instâncias que nascerem como Workers.
 > * **`dnsServers` (8.8.8.8 / 1.1.1.1):** Configuração de DNS para resolução de nomes externos (internet) para as VMs do Proxmox, não interferindo no CoreDNS interno do próprio Kubernetes.
+> * **Versão do Kubernetes:** `v1.36.2`
 
 ```yaml
 # Endpoint de comunicação unificado do Control Plane (VIP)
@@ -315,7 +315,12 @@ ipv4Config:
     - 192.168.18.205
   gateway: 192.168.18.1
   prefix: 24
-  prefix: 24
+
+# Registro de identidade do nó no Cloud Provider
+initConfiguration:
+  nodeRegistration:
+    kubeletExtraArgs:
+      provider-id: "proxmox://{{ ds.meta_data.instance_id }}"
     
 
 > - Gateway
