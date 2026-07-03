@@ -290,15 +290,18 @@ Quando o manifesto é aplicado, o CAPMOX captura o primeiro endereço de IP disp
 
 ### 📌 Configuração do Cluster (YAML)
 
-> 💡 **Entendendo a distribuição dos IPs:**
-> * **`controlPlaneEndpoint` (.203):** É o IP Virtual (VIP) oficial da API. O primeiro IP do pool do IPAM é alocado na interface de rede real para a VM que será o Control Plane, servindo como o ponto de escuta fixo do cluster.
-> * **Workers (.204 e .205):** Os IPs subsequentes do pool serão alocados automaticamente nas interfaces de rede reais das instâncias que nascerem como Workers.
+## 📌 Configuração do Cluster (YAML)
+
+> 💡 **Entendendo a distribuição de IPs e Funções:**
+> * **`controlPlaneEndpoint` (.202):** É o **IP Virtual (VIP)** dedicado do cluster. Ele não pertence a nenhuma interface física fixa; a API do Kubernetes (`kube-apiserver`) fica escutando através dele para garantir um ponto de acesso único e flutuante.
+> * **Nó Control Plane (.203):** O primeiro IP do pool de IPAM (`ipv4Config`) é alocado diretamente na interface de rede real (física) da VM que assume o papel de Control Plane.
+> * **Nós Workers (.204 e .205):** Os IPs subsequentes do pool são alocados de forma sequencial nas interfaces de rede reais das instâncias que nascerem como Workers.
 > * **`dnsServers` (8.8.8.8 / 1.1.1.1):** Configuração de DNS para resolução de nomes externos (internet) para as VMs do Proxmox, não interferindo no CoreDNS interno do próprio Kubernetes.
 
 ```yaml
 # Endpoint de comunicação unificado do Control Plane (VIP)
 controlPlaneEndpoint:  
-  host: 192.168.18.203  
+  host: 192.168.18.202  
   port: 6443
 
 # Configuração de rede e alocação de IPs via IPAM (CAPMOX)
@@ -311,6 +314,7 @@ ipv4Config:
     - 192.168.18.204
     - 192.168.18.205
   gateway: 192.168.18.1
+  prefix: 24
   prefix: 24
     
 
