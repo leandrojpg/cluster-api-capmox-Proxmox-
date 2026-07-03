@@ -369,30 +369,11 @@ postKubeadmCommands:
       done
 
 ```yaml
-# Cole aqui o conteúdo completo do arquivo cluster-lab.yaml
-```
 
 ---
-
-## Estrutura do manifesto
-
-O arquivo é composto pelos seguintes recursos:
-
-| Recurso | Função |
-|----------|--------|
-| **Cluster** | Define o cluster Kubernetes que será criado. |
-| **ProxmoxCluster** | Configura a infraestrutura do Proxmox, incluindo endpoint da API, DNS, gateway e credenciais. |
-| **KubeadmControlPlane** | Configura os nós de Control Plane e o bootstrap do Kubernetes. |
-| **ProxmoxMachineTemplate (Control Plane)** | Define como as VMs do Control Plane serão criadas no Proxmox. |
-| **MachineDeployment** | Define a quantidade de Workers e gerencia seu ciclo de vida. |
-| **KubeadmConfigTemplate** | Configuração utilizada durante o join dos Workers. |
-| **ProxmoxMachineTemplate (Workers)** | Template utilizado para criação das VMs dos Workers. |
-
----
-
 ## Aplicando o manifesto
 
-Após revisar o arquivo, aplique-o no Management Cluster.
+Após revisar o arquivo, aplique-o no **Cluster Genesis**
 
 ```bash
 kubectl apply -f cluster-lab.yaml
