@@ -350,7 +350,7 @@ postKubeadmCommands:
       sleep 5
     done
 
-# Instalação do Calico CNI e aguardo do DaemonSet estar pronto
+# Aguardo do DaemonSet estar pronto
 postKubeadmCommands:
   - |
     until curl -sk https://192.168.18.202:6443/healthz >/dev/null 2>&1; do
@@ -358,7 +358,7 @@ postKubeadmCommands:
       sleep 5
     done
 
-# Instala o Calico
+# Instala o Calico CNI
     - kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml
 
 # Aguarda o DaemonSet calico-node existir antes de aplicar o patch
