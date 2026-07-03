@@ -280,7 +280,8 @@ vim cluster-lab.yaml
 
 Copie todo o conteúdo abaixo para o arquivo.
 
-> **Importante:** Entenda os principais pontos e como eles funcionam:
+> **Importante:**
+Entenda os principais pontos e como eles funcionam:
 > 
 **Quando o manifesto é aplicado, a aplicação pega o primeiro endereço de IP do pool e fixa ele para ser usado na interface de rede. Esse IP é virtual e é por ele que a API vai ficar escutando.**
 > 
