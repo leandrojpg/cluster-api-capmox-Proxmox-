@@ -264,275 +264,150 @@ stringData:
 
 kubectl apply -f proxmox-credentials.yaml
 
-Agora crie um arquivo chamado cluster-lab.yaml com o conteúdo abaixo:
+# Criando o primeiro cluster Kubernetes no Proxmox
+
+Com o **Management Cluster** e o **Cluster API Provider for Proxmox (CAPMOX)** já instalados, o próximo passo é criar o manifesto que será responsável por provisionar automaticamente o cluster Kubernetes no Proxmox.
+
+---
+
+## Criando o manifesto do cluster
+
+Crie um arquivo chamado **`cluster-lab.yaml`**.
+
+```bash
 vim cluster-lab.yaml
+```
 
-apiVersion: cluster.x-k8s.io/v1beta1
-kind: Cluster
-metadata:
-  name: lab-kubeadm
-  namespace: default
-spec:
-  clusterNetwork:
-    pods:
-      cidrBlocks:
-        - 10.244.0.0/16
+Copie todo o conteúdo abaixo para o arquivo.
 
-  infrastructureRef:
-    apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
-    kind: ProxmoxCluster
-    name: lab-kubeadm
+> **Importante:** Antes de aplicar o manifesto, revise os parâmetros abaixo para refletirem o seu ambiente:
+>
+> - Endereço IP da API (`controlPlaneEndpoint.host`)
+> - Gateway
+> - DNS
+> - Faixa de IPs das máquinas
+> - Nome do nó do Proxmox (`sourceNode`)
+> - ID do template (`templateID`)
+> - Storage utilizado (`storage`)
+> - Recursos de CPU e Memória
+> - Versão do Kubernetes
+> - Interface de rede utilizada pelo kube-vip (`vip_interface`)
+> - Nome do Secret contendo as credenciais do Proxmox (`credentialsRef`)
 
-  controlPlaneRef:
-    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
-    kind: KubeadmControlPlane
-    name: lab-kubeadm-control-plane
-
----
-apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
-kind: ProxmoxCluster
-metadata:
-  name: lab-kubeadm
-  namespace: default
-spec:
-  controlPlaneEndpoint:
-    host: 192.168.18.202
-    port: 6443
-
-  dnsServers:
-    - 8.8.8.8
-    - 1.1.1.1
-
-  ipv4Config:
-    addresses:
-      - 192.168.18.203
-      - 192.168.18.204
-      - 192.168.18.205
-    gateway: 192.168.18.1
-    prefix: 24
-
-  credentialsRef:
-    name: proxmox-credentials
-    namespace: default
+```yaml
+# Cole aqui o conteúdo completo do arquivo cluster-lab.yaml
+```
 
 ---
-apiVersion: controlplane.cluster.x-k8s.io/v1beta1
-kind: KubeadmControlPlane
-metadata:
-  name: lab-kubeadm-control-plane
-  namespace: default
-spec:
-  replicas: 1
-  version: v1.36.2
 
-  machineTemplate:
-    infrastructureRef:
-      apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
-      kind: ProxmoxMachineTemplate
-      name: lab-kubeadm-control-plane
+## Estrutura do manifesto
 
-  kubeadmConfigSpec:
-    initConfiguration:
-      nodeRegistration:
-        kubeletExtraArgs:
-          provider-id: "proxmox://{{ ds.meta_data.instance_id }}"
+O arquivo é composto pelos seguintes recursos:
 
-    clusterConfiguration:
-      networking:
-        podSubnet: "10.244.0.0/16"
-
-      apiServer:
-        certSANs:
-          - "192.168.18.202"
-          - "192.168.18.203"
-          - "lab-kubeadm-control-plane"
-
-    files:
-      - path: /etc/kubernetes/manifests/kube-vip.yaml
-        owner: root:root
-        permissions: "0644"
-        content: |
-          apiVersion: v1
-          kind: Pod
-          metadata:
-            name: kube-vip
-            namespace: kube-system
-          spec:
-            containers:
-              - name: kube-vip
-                image: ghcr.io/kube-vip/kube-vip:v0.8.7
-                args:
-                  - manager
-                env:
-                  - name: vip_arp
-                    value: "true"
-                  - name: port
-                    value: "6443"
-                  - name: vip_interface
-                    value: ens18
-                  - name: cp_enable
-                    value: "true"
-                  - name: cp_namespace
-                    value: kube-system
-                  - name: vip_leaderelection
-                    value: "true"
-                  - name: vip_leaseduration
-                    value: "5"
-                  - name: vip_renewdeadline
-                    value: "3"
-                  - name: vip_retryperiod
-                    value: "1"
-                  - name: address
-                    value: "192.168.18.202"
-                securityContext:
-                  capabilities:
-                    add:
-                      - NET_ADMIN
-                      - NET_RAW
-                      - SYS_TIME
-                volumeMounts:
-                  - mountPath: /etc/kubernetes/admin.conf
-                    name: kubeconfig
-
-            hostAliases:
-              - hostnames:
-                  - kubernetes
-                ip: "192.168.18.203"
-
-            hostNetwork: true
-
-            volumes:
-              - hostPath:
-                  path: /etc/kubernetes/admin.conf
-                name: kubeconfig
-
-    postKubeadmCommands:
-      - |
-        until curl -sk https://192.168.18.202:6443/healthz >/dev/null 2>&1; do
-          echo "Aguardando VIP 192.168.18.202..."
-          sleep 5
-        done
-
-      - kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml
-
-      - |
-        until kubectl --kubeconfig /etc/kubernetes/admin.conf get daemonset calico-node -n kube-system >/dev/null 2>&1; do
-          echo "Aguardando DaemonSet calico-node ser criado..."
-          sleep 3
-        done
-
-      - |
-        kubectl --kubeconfig /etc/kubernetes/admin.conf set env daemonset/calico-node -n kube-system FELIX_HEALTHHOST=127.0.0.1
-
-      - kubectl --kubeconfig /etc/kubernetes/admin.conf delete pods -n kube-system -l k8s-app=calico-node --ignore-not-found
+| Recurso | Função |
+|----------|--------|
+| **Cluster** | Define o cluster Kubernetes que será criado. |
+| **ProxmoxCluster** | Configura a infraestrutura do Proxmox, incluindo endpoint da API, DNS, gateway e credenciais. |
+| **KubeadmControlPlane** | Configura os nós de Control Plane e o bootstrap do Kubernetes. |
+| **ProxmoxMachineTemplate (Control Plane)** | Define como as VMs do Control Plane serão criadas no Proxmox. |
+| **MachineDeployment** | Define a quantidade de Workers e gerencia seu ciclo de vida. |
+| **KubeadmConfigTemplate** | Configuração utilizada durante o join dos Workers. |
+| **ProxmoxMachineTemplate (Workers)** | Template utilizado para criação das VMs dos Workers. |
 
 ---
-apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
-kind: ProxmoxMachineTemplate
-metadata:
-  name: lab-kubeadm-control-plane
-  namespace: default
-spec:
-  template:
-    spec:
-      sourceNode: proxmox
-      templateID: 9000
-      storage: DATASTORE-04-NVME
 
-      memoryMiB: 4096
-      numCores: 2
-      numSockets: 1
+## Aplicando o manifesto
 
-      format: qcow2
-      full: true
+Após revisar o arquivo, aplique-o no Management Cluster.
 
-      disks:
-        bootVolume:
-          disk: scsi0
-          sizeGb: 40
-
-      network:
-        default:
-          bridge: vmbr0
-          model: virtio
+```bash
+kubectl apply -f cluster-lab.yaml
+```
 
 ---
-apiVersion: cluster.x-k8s.io/v1beta1
-kind: MachineDeployment
-metadata:
-  name: lab-kubeadm-workers
-  namespace: default
-spec:
-  clusterName: lab-kubeadm
-  replicas: 2
 
-  selector:
-    matchLabels:
-      cluster.x-k8s.io/deployment-name: lab-kubeadm-workers
+## Acompanhando a criação do cluster
 
-  template:
-    metadata:
-      labels:
-        cluster.x-k8s.io/deployment-name: lab-kubeadm-workers
+O Cluster API começará a criar todos os recursos necessários.
 
-    spec:
-      clusterName: lab-kubeadm
-      version: v1.36.2
+Você pode acompanhar a evolução utilizando os comandos abaixo.
 
-      bootstrap:
-        configRef:
-          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
-          kind: KubeadmConfigTemplate
-          name: lab-kubeadm-worker
+Verificando o Cluster:
 
-      infrastructureRef:
-        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
-        kind: ProxmoxMachineTemplate
-        name: lab-kubeadm-worker
+```bash
+kubectl get cluster -w
+```
 
----
-apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
-kind: KubeadmConfigTemplate
-metadata:
-  name: lab-kubeadm-worker
-  namespace: default
-spec:
-  template:
-    spec:
-      joinConfiguration:
-        nodeRegistration:
-          kubeletExtraArgs:
-            provider-id: "proxmox://{{ ds.meta_data.instance_id }}"
+Verificando as máquinas:
+
+```bash
+kubectl get machines -w
+```
+
+Verificando o Control Plane:
+
+```bash
+kubectl get kubeadmcontrolplane -w
+```
+
+Verificando o Machine Deployment:
+
+```bash
+kubectl get machinedeployment -w
+```
+
+Verificando os recursos do Proxmox:
+
+```bash
+kubectl get proxmoxmachines -w
+```
 
 ---
-apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
-kind: ProxmoxMachineTemplate
-metadata:
-  name: lab-kubeadm-worker
-  namespace: default
-spec:
-  template:
-    spec:
-      sourceNode: proxmox
-      templateID: 9000
-      storage: DATASTORE-04-NVME
 
-      memoryMiB: 4096
-      numCores: 2
-      numSockets: 1
+## Acompanhando pelo Proxmox
 
-      format: qcow2
-      full: true
+Durante a criação do cluster será possível observar automaticamente:
 
-      disks:
-        bootVolume:
-          disk: scsi0
-          sizeGb: 40
+- Criação das máquinas virtuais;
+- Clonagem do template informado;
+- Configuração do Cloud-Init;
+- Inicialização das VMs;
+- Instalação do Kubernetes;
+- Bootstrap do Control Plane;
+- Entrada dos nós Workers no cluster.
 
-      network:
-        default:
-          bridge: vmbr0
-          model: virtio
+Todo esse processo é realizado automaticamente pelo Cluster API.
+
+---
+
+## Obtendo o kubeconfig do cluster
+
+Quando todas as máquinas estiverem em estado **Running**, obtenha o kubeconfig do novo cluster.
+
+```bash
+clusterctl get kubeconfig lab-kubeadm > lab-kubeadm.kubeconfig
+```
+
+---
+
+## Acessando o cluster
+
+Utilize o kubeconfig gerado para validar a criação do cluster.
+
+```bash
+kubectl --kubeconfig lab-kubeadm.kubeconfig get nodes
+```
+
+O resultado esperado será semelhante ao exemplo abaixo:
+
+```text
+NAME                              STATUS   ROLES           AGE   VERSION
+lab-kubeadm-control-plane-xxxxx   Ready    control-plane   XXm   v1.36.2
+lab-kubeadm-workers-xxxxx         Ready    <none>          XXm   v1.36.2
+lab-kubeadm-workers-xxxxx         Ready    <none>          XXm   v1.36.2
+```
+
+Neste momento o cluster Kubernetes já estará operacional e pronto para receber aplicações.
 
           
 
