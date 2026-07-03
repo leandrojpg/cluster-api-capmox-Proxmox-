@@ -351,6 +351,7 @@ postKubeadmCommands:
     done
   # 2. Instala o Calico CNI
   - kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f [https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml](https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml)
+
   # 3. Aguarda o DaemonSet do Calico estar pronto
   - |
     until kubectl --kubeconfig /etc/kubernetes/admin.conf get daemonset calico-node -n kube-system >/dev/null 2>&1; do
