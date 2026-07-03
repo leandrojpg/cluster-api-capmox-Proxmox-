@@ -368,8 +368,6 @@ postKubeadmCommands:
         sleep 3
       done
 
-```yaml
-
 
 
 
