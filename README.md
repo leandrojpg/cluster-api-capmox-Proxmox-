@@ -20,7 +20,7 @@ Existe um projeto chamado **Kind (Kubernetes IN Docker)**.
 
 O Kind executa um cluster Kubernetes completo dentro de containers Docker.
 
-Ele foi criado inicialmente para testes, desenvolvimento e CI/CD, mas também é perfeito para servir como **Management Cluster** do Cluster API.
+Ele foi criado inicialmente para testes, desenvolvimento e CI/CD, mas também é perfeito para servir como **Genesis Cluster** do Cluster API.
 
 Neste laboratório, o Kind será responsável apenas por hospedar os componentes do Cluster API.
 
@@ -33,7 +33,7 @@ A arquitetura ficará assim:
                     │
          Docker + Kind + Cluster API
                     │
-          (Management Cluster)
+          (Genesis Cluster)
                     │
         ┌───────────┼───────────┐
         │           │           │
@@ -46,7 +46,7 @@ A arquitetura ficará assim:
 
 # Por onde começar?
 
-Antes de qualquer coisa você precisa possuir um servidor executando o Proxmox.
+Antes de qualquer coisa você precisa de um servidor executando o Proxmox.
 
 No meu laboratório utilizei um hardware relativamente simples, montado com peças de baixo custo.
 
@@ -201,7 +201,7 @@ Em seguida crie o cluster
 kind create cluster --name capi-genesis --config kind-config.yaml  
 <img width="593" height="264" alt="image" src="https://github.com/user-attachments/assets/e388599f-66c5-42cf-83c6-c6c5b8e1a522" />
 
-Como cluster criado valide só para sacar como fica:
+Com o cluster criado valide só para sacar como fica:
 kubectl get nodes
 <img width="586" height="82" alt="image" src="https://github.com/user-attachments/assets/13be2289-c60f-4a25-a53f-f14733064632" />
 
@@ -213,14 +213,21 @@ Instale também
 clusterctl init --ipam in-cluster
 
 
-Legal agora preciso criar o token no Proxmox que vai ser usado pelo cluster kind que tem o promox se conectar ao proxmox (Tome nota do Token)
+Legal, agora preciso criar o token no Proxmox que vai ser usado pelo cluster kind para se conectar ao proxmox (Tome nota do Token)
+Gera conforme mostrado acima.
 
 <img width="922" height="614" alt="image" src="https://github.com/user-attachments/assets/884a3e8b-8170-48f1-a461-a7c95f61a665" />
 
 Logue no servidor do proxmox aqui no meu lab é 192.168.18.31 e altere as roles  
 pveum acl modify /nodes --token 'root@pam!kubernetes' --roles Administrator  
 
-O provedor do Proxmox da IONOS Cloud (cluster-api-provider-proxmox) não aceita receber a URL e o Token diretamente, sendo assim precisamos criar um secret 
+## Configurando as credenciais do Proxmox
+
+O **Cluster API Provider for Proxmox (CAPMOX)** não permite informar as credenciais de acesso (URL da API, Token ID e Token Secret) diretamente no manifesto do cluster.
+
+Por questões de segurança, essas informações devem ser armazenadas em um **Secret** do Kubernetes, que será referenciado pelo recurso `ProxmoxCluster`.
+
+Crie um arquivo chamado `proxmox-credentials.yaml` com o seguinte conteúdo:
 crie um arquivo proxmox-credentials.yaml
 vim proxmox-credentials.yaml
 
