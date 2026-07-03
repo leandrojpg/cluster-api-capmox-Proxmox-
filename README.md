@@ -259,7 +259,8 @@ stringData:
 <img width="360" height="182" alt="image" src="https://github.com/user-attachments/assets/ec83cc5f-dfa2-48f3-90e4-22cdeed58c2c" />  
 
 
-Aplique no cluster  
+**Aplique no Cluster** 
+
 
 kubectl apply -f proxmox-credentials.yaml
 
