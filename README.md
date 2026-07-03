@@ -290,7 +290,7 @@ Entenda os principais pontos e como eles funcionam:
     host: 192.168.18.202  
     port: 6443
 
-> - DNS Serve para resolução de nomes externos e não do cluster DNS
+> - DNS Serve para resolução de nomes externos e não do cluster DNS  
     dnsServers:
     8.8.8.8
     1.1.1.1
