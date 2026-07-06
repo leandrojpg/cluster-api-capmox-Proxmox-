@@ -455,6 +455,11 @@ kubectl get providers -A
 <img width="824" height="154" alt="image" src="https://github.com/user-attachments/assets/15b16a7a-e02c-45a3-9623-9f28aa5df9a1" />
 
 
+Agora sim podemos fazer o move 
+
+clusterctl move --to-kubeconfig lab-kubeadm.kubeconfig
+
+
 
 
 
