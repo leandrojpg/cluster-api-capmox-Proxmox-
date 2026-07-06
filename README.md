@@ -426,9 +426,15 @@ O que foi feito até aqui?
 🔑 **Pegamos a chave de acesso:** Primeiro, nós pegamos o token (a credencial de acesso) do novo cluster que foi criado no Proxmox.
 A regra é sempre uma receita de bolo: [Nome exato do seu Cluster] + -kubeconfig.  
 
+```bash
 clusterctl get kubeconfig lab-kubeadm > lab-kubeadm.kubeconfig  
+```
+
 Para evitar de ficar passando o arquivo toda hora podemos usar a variavel KUBECONFIG  
+```bash
 export KUBECONFIG=~/cluster-api/lab-kubeadm.kubeconfig
+```
+
 
 
 
