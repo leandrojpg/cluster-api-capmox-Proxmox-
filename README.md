@@ -451,7 +451,10 @@ clusterctl init --infrastructure proxmox --ipam in-cluster
 
 Repita o comando e veja a diferenca:  
 kubectl get providers -A  
-![Uploading image.png…]()
+
+<img width="824" height="154" alt="image" src="https://github.com/user-attachments/assets/15b16a7a-e02c-45a3-9623-9f28aa5df9a1" />
+
+
 
 
 
