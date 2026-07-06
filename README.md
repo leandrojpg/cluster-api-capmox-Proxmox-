@@ -383,7 +383,15 @@ template:
 
 ```
 
-## 📌 Validação:
+Agora que as principais opções foram explicadas basta aplicar o manifessto
+kubectl apply -f cluster-lab.yaml
+
+O que acontece no proxmox depois de aplicado?  
+O cluster que instalamos no bastion irá se comunicar com o Promox e irá criar nosso primeiro cluster utilizando os parametros que passamos no arquivo cluster-lab.yaml
+<img width="1917" height="824" alt="image" src="https://github.com/user-attachments/assets/b0443933-2ff0-4961-bea5-16cd779d2397" />
+
+
+
 
 
 
