@@ -402,7 +402,8 @@ kubectl get machines -w
 
 O que foi feito até aqui?
 
-> 💡 **Criamos um cluster simples chamado de Genesis por que precisamos partir de algum lugar para criar o cluster no proxmox e o kind é perfeito pra isso.** 
+> 💡 **Criamos um cluster simples chamado de Genesis por que precisamos partir de algum lugar para criar o cluster no proxmox e o kind é perfeito pra isso.**
+
 > 💡 **Em seguida instalamos nesse cluster chamado capi-genesis todos os componentes do Capmox para que possa falar com o Cluster do Proxmox.** 
 
 
