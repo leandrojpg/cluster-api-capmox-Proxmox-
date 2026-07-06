@@ -434,6 +434,15 @@ Para evitar de ficar passando o arquivo toda hora podemos usar a variavel KUBECO
 ```bash
 export KUBECONFIG=~/cluster-api/lab-kubeadm.kubeconfig
 ```
+Experimente
+
+```bash
+ kubectl get nodes -A
+```
+<img width="579" height="105" alt="image" src="https://github.com/user-attachments/assets/0792f0ad-7186-46fc-9143-84142e005667" />
+
+
+
 
 
 
