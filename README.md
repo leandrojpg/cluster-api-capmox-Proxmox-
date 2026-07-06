@@ -398,6 +398,16 @@ kubectl get machines -w
 
 <img width="1145" height="100" alt="image" src="https://github.com/user-attachments/assets/322f82ba-908a-4802-86eb-7434cda24f69" />
 
+## 📌 Migrando o Capi Kubernetes do Bastion para o Proxmox
+
+O que foi feito até aqui?
+
+> 💡 **Criamos um cluster simples chamado de Genesis por que precisamos partir de algum lugar para criar o cluster no proxmox e o kind é perfeito pra isso.** 
+> 💡 ** Em seguida instalamos nesse cluster chamado capi-genesis todos os componentes do Capmox para que possa falar com o Cluster do Proxmox.** 
+
+
+
+
 
 
 
