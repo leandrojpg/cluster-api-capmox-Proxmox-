@@ -404,7 +404,13 @@ O que foi feito até aqui?
 
 > 💡 **Criamos um cluster simples chamado de Genesis por que precisamos partir de algum lugar para criar o cluster no proxmox e o kind é perfeito pra isso.**
 
-> 💡 **Em seguida instalamos nesse cluster chamado capi-genesis todos os componentes do Capmox para que possa falar com o Cluster do Proxmox.** 
+> 💡 **Em seguida instalamos nesse cluster chamado capi-genesis todos os componentes do Capmox para que possa falar com o Cluster do Proxmox.**
+> 
+> 💡 **Criamos um arquivo chamado proxmox-credentials.yaml que tem o token usado pelo capi e outras configuracoes usados peplo cluster genesis no bastion para se conectar ao Proxmos**
+
+> 💡 **Criamos um arquivo com instrucoes claras o que deve ser criado no Proxmox, como vms,configuracao da rede, controlplane etc..** 
+
+ 
 
 
 
