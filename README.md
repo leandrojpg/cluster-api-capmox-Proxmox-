@@ -430,7 +430,7 @@ A regra é sempre uma receita de bolo: [Nome exato do seu Cluster] + -kubeconfig
 clusterctl get kubeconfig lab-kubeadm > lab-kubeadm.kubeconfig  
 ```
 
-Para evitar de ficar passando o arquivo toda hora podemos usar a variavel KUBECONFIG  
+Para evitar de ficar passando o arquivo toda hora podemos usar a variavel KUBECONFIG  assim todos os comandos que emitirmos com kubectl.. será diretamente no cluster que foi criado no Proxmox  
 ```bash
 export KUBECONFIG=~/cluster-api/lab-kubeadm.kubeconfig
 ```
