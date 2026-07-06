@@ -445,7 +445,7 @@ Validando que nao temos nada instalado no novo cluster
 kubectl get providers -A  
 <img width="494" height="70" alt="image" src="https://github.com/user-attachments/assets/7a510a1f-9e9a-41bb-bfa0-7998e6309d79" />
 
-Instalando:
+Instalando:  
 clusterctl init --infrastructure proxmox --ipam in-cluster  
 <img width="874" height="164" alt="image" src="https://github.com/user-attachments/assets/091e18e5-afc2-46fd-b1a8-d2e5c41031c9" />
 
