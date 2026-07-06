@@ -441,6 +441,16 @@ Experimente
 ```
 <img width="579" height="105" alt="image" src="https://github.com/user-attachments/assets/0792f0ad-7186-46fc-9143-84142e005667" />
 
+Validando que nao temos nada instalado no novo cluster  
+kubectl get providers -A  
+<img width="494" height="70" alt="image" src="https://github.com/user-attachments/assets/7a510a1f-9e9a-41bb-bfa0-7998e6309d79" />
+
+Instalando:
+clusterctl init --infrastructure proxmox --ipam in-cluster  
+![Uploading image.png…]()
+
+
+
 
 
 
