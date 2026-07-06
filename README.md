@@ -406,9 +406,9 @@ O que foi feito até aqui?
 
 > 💡 **Em seguida instalamos nesse cluster chamado capi-genesis todos os componentes do Capmox para que possa falar com o Cluster do Proxmox.**
 > 
-> 💡 **Criamos um arquivo chamado proxmox-credentials.yaml que tem o token usado pelo capi e outras configuracoes usados peplo cluster genesis no bastion para se conectar ao Proxmos**
+> 💡 **Criamos um arquivo chamado proxmox-credentials.yaml que tem o token usado pelo capi e outras configuracoes que garantem a autenticação pelo cluster genesis ao Proxmox**
 
-> 💡 **Criamos um arquivo com instrucoes claras o que deve ser criado no Proxmox, como vms,configuracao da rede, controlplane etc..** 
+> 💡 **Criamos um arquivo chamado cluster-lab.yaml  com instrucoes claras o que deve ser criado no Proxmox, como vms,configuracao da rede, controlplane,workers e etc..** 
 
  
 
