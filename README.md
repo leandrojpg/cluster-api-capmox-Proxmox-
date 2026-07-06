@@ -388,7 +388,7 @@ kubectl apply -f cluster-lab.yaml
 
 O que acontece no proxmox depois de aplicado?  
 O cluster que instalamos no bastion irá se comunicar com o Promox e irá criar nosso primeiro cluster utilizando os parametros que passamos no arquivo cluster-lab.yaml  
-Observe que ele criou as 3 vms.
+Observe que ele criou as 3 vms.  
 
 <img width="1911" height="740" alt="image" src="https://github.com/user-attachments/assets/bba9185c-611e-4e36-9514-6807f0d43c74" />
 
@@ -399,7 +399,6 @@ kubectl get machines -w
 <img width="1145" height="100" alt="image" src="https://github.com/user-attachments/assets/322f82ba-908a-4802-86eb-7434cda24f69" />
 
 
-<img width="1917" height="824" alt="image" src="https://github.com/user-attachments/assets/b0443933-2ff0-4961-bea5-16cd779d2397" />
 
 
 
