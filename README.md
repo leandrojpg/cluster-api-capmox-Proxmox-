@@ -408,7 +408,21 @@ O que foi feito até aqui?
 > 
 > 💡 **Criamos um arquivo chamado proxmox-credentials.yaml que tem o token usado pelo capi e outras configuracoes que garantem a autenticação pelo cluster genesis ao Proxmox**
 
-> 💡 **Criamos um arquivo chamado cluster-lab.yaml  com instrucoes claras o que deve ser criado no Proxmox, como vms,configuracao da rede, controlplane,workers e etc..** 
+> 💡 **Criamos um arquivo chamado cluster-lab.yaml  com instrucoes claras o que deve ser criado no Proxmox, como vms,configuracao da rede, controlplane,workers e etc..**
+
+"Até agora, toda a criação do nosso ambiente dependia de uma estrutura temporária (o cluster na máquina bastion). Isso funcionou para o começo, mas não é o jeito profissional. Aquele primeiro cluster foi só o nosso ponto de partida.
+O correto agora é migrarmos todo o controle para o novo Cluster definitivo que criamos dentro do Proxmox. A partir de agora, é esse cluster principal que vai gerenciar e gerar tudo sozinho. Se amanhã você precisar criar um ambiente de produção real, é essa nova estrutura que você vai usar.
+
+"E como fazemos essa mudança? O processo funciona assim:
+
+Pegamos a chave de acesso: Primeiro, nós pegamos o token (a credencial de acesso) do novo cluster que foi criado no Proxmox.
+
+Instalamos as ferramentas (CAPMOX): Usamos essa chave para entrar nele e instalar os componentes do CAPMOX. Fazemos isso porque, até esse momento, ele é apenas um cluster Kubernetes comum e 'cego' — ele não sabe nada sobre as máquinas virtuais do Proxmox.
+
+A transferência de poder: Ao instalar esses pacotes do CAPMOX dentro dele, damos a ele a estrutura base para que ele entenda o Proxmox. É nesse momento que ele ganha superpoderes e se torna oficialmente o 'dono do jogo', pronto para assumir o controle total e gerenciar a si mesmo e a outros clusters."
+
+
+
 
  
 
