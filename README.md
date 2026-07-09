@@ -427,7 +427,8 @@ O que foi feito até aqui?
 A regra é sempre uma receita de bolo: [Nome exato do seu Cluster] + -kubeconfig.  
 
 ```bash
-clusterctl get kubeconfig lab-kubeadm > lab-kubeadm.kubeconfig  
+clusterctl get kubeconfig lab-kubeadm > lab-kubeadm.kubeconfig
+
 ```
 
 Para evitar de ficar passando o arquivo toda hora podemos usar a variavel KUBECONFIG  assim todos os comandos que emitirmos com kubectl.. será diretamente no cluster que foi criado no Proxmox  
@@ -452,12 +453,14 @@ clusterctl init --infrastructure proxmox --ipam in-cluster
 Repita o comando e veja a diferenca:  
 kubectl get providers -A  
 
-<img width="824" height="154" alt="image" src="https://github.com/user-attachments/assets/15b16a7a-e02c-45a3-9623-9f28aa5df9a1" />
+<img width="824" height="154" alt="image" src="https://github.com/user-attachments/assets/15b16a7a-e02c-45a3-9623-9f28aa5df9a1" />  
 
+Voltar para o Management Cluster (Kind)  
+unset KUBECONFIG  
 
-Agora sim podemos fazer o move 
+Agora sim podemos fazer o move   
+clusterctl move --to-kubeconfig lab-kubeadm.kubeconfig  
 
-clusterctl move --to-kubeconfig lab-kubeadm.kubeconfig
 
 
 
