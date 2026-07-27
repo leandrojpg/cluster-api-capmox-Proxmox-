@@ -460,14 +460,22 @@ Voltar para o Management Cluster (Kind)
 unset KUBECONFIG  
 
 Agora sim podemos fazer o move   
+"Cuidado ao executar clusterctl move: após a migração, o cluster destino passa a ser o Management Cluster. Ele não deve ser destruído como workload, pois os controladores CAPI/CAPMOX residem nele."     
+
 clusterctl move --to-kubeconfig lab-kubeadm.kubeconfig  
 
 <img width="1741" height="275" alt="image" src="https://github.com/user-attachments/assets/9071198d-a6a6-4a6d-b543-a39d6146be03" />
 
+A partir desse momento o cluster management ( Responsável por gerir e criar outros clusters está rodando inteiramento no Proxmox.)  
+Isso quer dizer que se voce quiser criar um ou mais clusters para seu ambientes é tudo através dele.  
 
 
 
-"Cuidado ao executar clusterctl move: após a migração, o cluster destino passa a ser o Management Cluster. Ele não deve ser destruído como workload, pois os controladores CAPI/CAPMOX residem nele."     
+
+
+
+
+
 
 
 
