@@ -462,7 +462,7 @@ unset KUBECONFIG
 Agora sim podemos fazer o move   
 clusterctl move --to-kubeconfig lab-kubeadm.kubeconfig  
 
-<img width="1736" height="309" alt="image" src="https://github.com/user-attachments/assets/aa33ea59-e20a-4610-abbd-a3b8a2da6c32" />
+<img width="1741" height="275" alt="image" src="https://github.com/user-attachments/assets/9071198d-a6a6-4a6d-b543-a39d6146be03" />
 
 
 
