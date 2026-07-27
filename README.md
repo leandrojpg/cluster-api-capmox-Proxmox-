@@ -462,6 +462,9 @@ unset KUBECONFIG
 Agora sim podemos fazer o move   
 clusterctl move --to-kubeconfig lab-kubeadm.kubeconfig  
 
+<img width="1736" height="309" alt="image" src="https://github.com/user-attachments/assets/03d4ac86-0635-4da6-bdc7-d12d6104ac39" />
+
+
 
 
 "Cuidado ao executar clusterctl move: após a migração, o cluster destino passa a ser o Management Cluster. Ele não deve ser destruído como workload, pois os controladores CAPI/CAPMOX residem nele."     
