@@ -351,6 +351,16 @@ postKubeadmCommands:
       echo "Aguardando VIP 192.168.18.202..."
       sleep 5
     done
+
+# Aqui é o famigerado o ovo ou galinha como o modelo de implantação usa um IP Virtual o famoso VIP,quando os pods precisam falar com API o VIP ainda nao está pronto, e isso quebra a inicialização por completo, a maneira de ajustar sem precisar de um haproxy + keepalived
+é criando um hostaliases para a propria máquina do Control Plane. Assim a resolucao vai bater nela mesmo e vai ficar tudo bem. Mas lembre-se que apos isso o VIP vai funcionar lindamente.
+hostAliases:
+          - hostnames:
+            - kubernetes
+            ip: "192.168.18.203"
+          hostNetwork: true
+
+
   # 2. Instala o Calico CNI
   - kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f [https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml](https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml)
 
