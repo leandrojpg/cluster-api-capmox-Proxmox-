@@ -489,6 +489,7 @@ Observe que estamos de fato acessando o clusterapi no proxmox veja que os nomes 
 Veja agora os pods rodando  
 
 kubectl --kubeconfig lab-kubeadm.kubeconfig get pods -A
+<img width="1096" height="461" alt="image" src="https://github.com/user-attachments/assets/01c7fefa-a319-463c-8e66-ad6c0fdaa4cc" />
 
 
 
