@@ -16,6 +16,7 @@ spec:
     apiVersion: controlplane.cluster.x-k8s.io/v1beta1
     kind: KubeadmControlPlane
     name: lab-kubeadm-control-plane
+
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
 kind: ProxmoxCluster
@@ -39,6 +40,7 @@ spec:
   credentialsRef:
     name: proxmox-credentials
     namespace: default
+
 ---
 apiVersion: controlplane.cluster.x-k8s.io/v1beta1
 kind: KubeadmControlPlane
@@ -112,3 +114,135 @@ spec:
             volumeMounts:
             - mountPath: /etc/kubernetes/admin.conf
               name: kubeconfig
+          hostAliases:
+          - hostnames:
+            - kubernetes
+            ip: "192.168.18.203"
+          hostNetwork: true
+          volumes:
+          - hostPath:
+              path: /etc/kubernetes/admin.conf
+            name: kubeconfig
+    postKubeadmCommands:
+    # 1. Aguarda o VIP do control plane ficar disponível
+    - |
+      until curl -sk https://192.168.18.202:6443/healthz >/dev/null 2>&1; do
+        echo "Aguardando VIP 192.168.18.202..."
+        sleep 5
+      done
+
+    # 2. Instala o Calico
+    - kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml
+
+    # 3. Aguarda o DaemonSet calico-node existir antes de aplicar o patch
+    - |
+      until kubectl --kubeconfig /etc/kubernetes/admin.conf get daemonset calico-node -n kube-system >/dev/null 2>&1; do
+        echo "Aguardando DaemonSet calico-node ser criado..."
+        sleep 3
+      done
+
+    # 4. Patch: define FELIX_HEALTHHOST=127.0.0.1
+    # Causa raiz real do erro "lookup localhost on X.X.X.X:53: no such host":
+    # a imagem do calico/node não resolve "localhost" corretamente via /etc/hosts
+    # em alguns ambientes (bug conhecido, falta de libnss_files). O FELIX_HEALTHHOST
+    # faz o Felix escutar direto em 127.0.0.1 sem nunca precisar resolver "localhost".
+    - |
+      kubectl --kubeconfig /etc/kubernetes/admin.conf set env daemonset/calico-node -n kube-system FELIX_HEALTHHOST=127.0.0.1
+
+    # 5. Força recriação dos pods do calico-node para aplicar o patch
+    - kubectl --kubeconfig /etc/kubernetes/admin.conf delete pods -n kube-system -l k8s-app=calico-node --ignore-not-found
+
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+kind: ProxmoxMachineTemplate
+metadata:
+  name: lab-kubeadm-control-plane
+  namespace: default
+spec:
+  template:
+    spec:
+      sourceNode: proxmox
+      templateID: 9000
+      storage: DATASTORE-04-NVME
+      memoryMiB: 4096
+      numCores: 2
+      numSockets: 1
+      format: qcow2
+      full: true
+      disks:
+        bootVolume:
+          disk: scsi0
+          sizeGb: 40
+      network:
+        default:
+          bridge: vmbr0
+          model: virtio
+
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachineDeployment
+metadata:
+  name: lab-kubeadm-workers
+  namespace: default
+spec:
+  clusterName: lab-kubeadm
+  replicas: 2
+  selector:
+    matchLabels:
+      cluster.x-k8s.io/deployment-name: lab-kubeadm-workers
+  template:
+    metadata:
+      labels:
+        cluster.x-k8s.io/deployment-name: lab-kubeadm-workers
+    spec:
+      clusterName: lab-kubeadm
+      version: v1.36.2
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          kind: KubeadmConfigTemplate
+          name: lab-kubeadm-worker
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+        kind: ProxmoxMachineTemplate
+        name: lab-kubeadm-worker
+
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+kind: KubeadmConfigTemplate
+metadata:
+  name: lab-kubeadm-worker
+  namespace: default
+spec:
+  template:
+    spec:
+      joinConfiguration:
+        nodeRegistration:
+          kubeletExtraArgs:
+            provider-id: "proxmox://{{ ds.meta_data.instance_id }}"
+
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+kind: ProxmoxMachineTemplate
+metadata:
+  name: lab-kubeadm-worker
+  namespace: default
+spec:
+  template:
+    spec:
+      sourceNode: proxmox
+      templateID: 9000
+      storage: DATASTORE-04-NVME
+      memoryMiB: 4096
+      numCores: 2
+      numSockets: 1
+      format: qcow2
+      full: true
+      disks:
+        bootVolume:
+          disk: scsi0
+          sizeGb: 40
+      network:
+        default:
+          bridge: vmbr0
+          model: virtio
