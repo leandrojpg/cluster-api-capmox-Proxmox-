@@ -484,7 +484,7 @@ Quer verificar se os pods de gerenciamento e os nodes já subiram lá dentro? É
 kubectl --kubeconfig lab-kubeadm.kubeconfig get nodes -A | grep lab-kubeadm-  
 
 Observe que estamos de fato acessando o clusterapi no proxmox veja que os nomes do hosts batem.  
-<img width="963" height="109" alt="image" src="https://github.com/user-attachments/assets/50b9f4aa-04ee-4d78-94da-61831c3a0796" />  
+<img width="361" height="182" alt="image" src="https://github.com/user-attachments/assets/1d8d5914-f85e-464a-a20c-13ee6d5c24c6" />
 
 
 <img width="361" height="182" alt="image" src="https://github.com/user-attachments/assets/e61e17ee-8696-4b9c-aacd-9037127018aa" />
