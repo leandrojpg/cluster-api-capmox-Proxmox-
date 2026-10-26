@@ -193,7 +193,7 @@ Agora que a Bastion está pronta, o próximo passo será criar o **Cluster Genes
 Esse cluster hospedará todos os componentes do Cluster API e será responsável por criar automaticamente os clusters Kubernetes dentro do Proxmox.  
 
 Crie diretório para organizar as coisas:  
-mkdir /opt/cluster-api/  
+mkdir /root/cluster-api/  
 Crie um arquivo  com o seguinte conteúdo  
 vim kind-config.yaml 
 
