@@ -479,6 +479,17 @@ clusterctl move --to-kubeconfig lab-kubeadm.kubeconfig
 A partir desse momento o cluster management ( Responsável por gerir e criar outros clusters está rodando inteiramento no Proxmox.)  
 Isso quer dizer que se voce quiser criar um ou mais clusters para seu ambientes é tudo através dele.  
 
+Quer verificar se os pods de gerenciamento e os nodes já subiram lá dentro? É só rodar um 
+
+kubectl --kubeconfig lab-kubeadm.kubeconfig get nodes -A | grep lab-kubeadm-  
+
+Observe que estamos de fato acessando o clusterapi no proxmox veja que os nomes do hosts batem.  
+<img width="963" height="109" alt="image" src="https://github.com/user-attachments/assets/50b9f4aa-04ee-4d78-94da-61831c3a0796" />  
+
+Veja agora os pods rodando  
+
+kubectl --kubeconfig lab-kubeadm.kubeconfig get pods -A
+
 
 
 
