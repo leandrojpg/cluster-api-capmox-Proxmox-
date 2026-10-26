@@ -486,10 +486,6 @@ kubectl --kubeconfig lab-kubeadm.kubeconfig get nodes -A | grep lab-kubeadm-
 Observe que estamos de fato acessando o clusterapi no proxmox veja que os nomes do hosts batem.  
 <img width="361" height="182" alt="image" src="https://github.com/user-attachments/assets/1d8d5914-f85e-464a-a20c-13ee6d5c24c6" />
 
-
-<img width="361" height="182" alt="image" src="https://github.com/user-attachments/assets/e61e17ee-8696-4b9c-aacd-9037127018aa" />
-
-
 Veja agora os pods rodando  
 
 kubectl --kubeconfig lab-kubeadm.kubeconfig get pods -A
